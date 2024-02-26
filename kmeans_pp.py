@@ -32,10 +32,19 @@ def main():
     
     # Step 2: Combine both input files by inner join using the first column in each file as a key
     
-    pass
+    text_file_1 = open(file_name_1, 'r')
+    raw_text_1 = text_file_1.read()
+    text_file_1.close()
+    text_file_2 = open(file_name_2, 'r')
+    raw_text_2 = text_file_2.read()
+    text_file_2.close()
 
-
+    # TODO: inner join 
     
+    
+    
+    
+    # Step 3: Sort the data points by the ’key’ in ascending order
     
     
         
