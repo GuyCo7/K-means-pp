@@ -1,5 +1,7 @@
+import math
 import sys
-
+import pandas as pd
+import numpy as np
 
 DEFAULT_ITERATIONS = 300
 
@@ -14,9 +16,9 @@ def main():
     
     k = convert_to_number(sys.argv[1])
     
-    if len(sys.argv):
+    if len(sys.argv) == 6:
         iter = convert_to_number(sys.argv[2])
-        eps = convert_to_number(sys.argv[3])
+        eps = convert_to_float(sys.argv[3])
         file_name_1 = sys.argv[4]
         file_name_2 = sys.argv[5]
     else:
@@ -32,19 +34,43 @@ def main():
     
     # Step 2: Combine both input files by inner join using the first column in each file as a key
     
-    text_file_1 = open(file_name_1, 'r')
-    raw_text_1 = text_file_1.read()
-    text_file_1.close()
-    text_file_2 = open(file_name_2, 'r')
-    raw_text_2 = text_file_2.read()
-    text_file_2.close()
+    table1 = pd.read_csv(file_name_1, header=None)
+    table2 = pd.read_csv(file_name_2, header=None)
+    
+    table1.columns = range(table1.shape[1])
+    table2.columns = range(table2.shape[1])
+    
+    print ("1:::::\n" + table1.to_string())
+    print ("2:::::\n" + table2.to_string())
 
-    # TODO: inner join 
+    merged_table = pd.merge(table1, table2, on=0)
+    print ("merged:::::\n" + merged_table.to_string())
+    
+    # Step 3: After join, sort the data points by the ’key’ in ascending order.
+    
+    sorted_table = merged_table.sort_values(by=0)
+    print ("sorted:::::\n" + sorted_table.to_string())
+    
+    
+    # Step 4: Implementation of the k-means++ algorithm
+    # Kmeans++ Implementation
+    
+    # 1 - Choose one center uniformly at random among the data points.
+    N = len(sorted_table)
+    print("number of data points --- " + str(N))
+    
+    np.random.seed(0)
+    first_center_index = np.random.choice(N)
+    print("first_center_index --- " + str(first_center_index))
+    
+    first_center = sorted_table.values[first_center_index]
+    print("first_center --- " + str(first_center))
+    
+    # 2 - For each data point x not chosen yet, compute D(x), the distance between x and the nearest
+    #     center that has already been chosen.
     
     
     
-    
-    # Step 3: Sort the data points by the ’key’ in ascending order
     
     
         
@@ -61,6 +87,22 @@ def convert_to_number(str):
         print(str + " is not a whole number!")
         print("Check your arguments again")
         exit()
+
+def convert_to_float(str):
+    try:
+        return float(str)
+    except ValueError:
+        print(str + " is not a float!")
+        print("Check your arguments again")
+        exit()
+
+# Function to calculate Euclidean distance
+def euclidean_distance(vector_x, vector_y):
+    sum = 0
+    for i in range(len(vector_x)):
+        sum += (float(vector_x[i]) - float(vector_y[i])) ** 2
+    
+    return math.sqrt(sum)
 
 if __name__ == "__main__":
     main()
