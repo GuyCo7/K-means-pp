@@ -60,20 +60,37 @@ def main():
     print("number of data points --- " + str(N))
     
     np.random.seed(0)
-    first_center_index = np.random.choice(N)
-    print("first_center_index --- " + str(first_center_index))
+    first_centeroid_index = np.random.choice(N)
+    print("first_center_index --- " + str(first_centeroid_index))
     
-    first_center = sorted_table.values[first_center_index]
-    print("first_center --- " + str(first_center))
+    first_center_centroid = sorted_table.values[first_centeroid_index]
+    print("first_center --- " + str(first_center_centroid))
+    
+    centroids = []
+    centroids.append(first_center_centroid)
     
     # 2 - For each data point x not chosen yet, compute D(x), the distance between x and the nearest
     #     center that has already been chosen.
     
-    
-    
-    
-    
+    print(sorted_table.values)
+    for i in range(N):
+        if i == first_centeroid_index:
+            continue
+        distance = euclidean_distance(sorted_table.values[i][1:], sorted_table.values[first_centeroid_index][1:])
+        print(distance)
         
+    
+    # 3 - Choose one new data point at random as a new center, using a weighted probability distribution
+    #     where a point x is chosen with probability proportional to P(xl)
+    
+    
+    probabilities = get_probabilities(sorted_table, N, centroids)
+    print(probabilities)
+    sum = 0
+    for prob in probabilities:
+        sum += prob
+    
+    
 
 
 
@@ -104,5 +121,30 @@ def euclidean_distance(vector_x, vector_y):
     
     return math.sqrt(sum)
 
+
+def get_probability(vector, centroids, vectors, N):
+    current_min_distance = D(vector, centroids)
+    
+    sum = 0
+    for i in range(N):
+        current_vector = vectors[i][1:]
+        sum += D(current_vector, centroids)
+    
+    return current_min_distance / sum
+
+def get_probabilities(sorted_table, N, centroids):
+    probabilities = []
+    for i in range(N):
+        current_vector = sorted_table.values[i][1:]
+        current_probability = get_probability(current_vector, centroids, sorted_table.values, N)
+        probabilities.append(current_probability)
+    
+    return probabilities
+    
+
+def D(vector, centroids):
+    distances = [euclidean_distance(vector, centroid) for centroid in centroids]
+    return min(distances)
+    
 if __name__ == "__main__":
     main()
