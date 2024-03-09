@@ -59,6 +59,8 @@ def main():
     N = len(sorted_table)
     print("number of data points --- " + str(N))
     
+    assert k < N, "Invalid number of clusters!"
+    
     np.random.seed(0)
     first_centeroid_index = np.random.choice(N)
     print("first_center_index --- " + str(first_centeroid_index))
