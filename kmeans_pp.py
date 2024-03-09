@@ -90,8 +90,6 @@ def main():
     for prob in probabilities:
         sum += prob
     
-    
-
 
 
 # ~~~ Helper Functions ~~~

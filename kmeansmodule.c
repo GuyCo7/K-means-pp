@@ -6,9 +6,9 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     int k;
     int iter;
     int n;
-    int dimension;
-    /* This parses the Python arguments into a double (d)  variable named z and int (i) variable named n*/
-    if (!PyArg_ParseTuple(args, "iiii", &k, &iter, &n, &dimension))
+    int d;
+    /* This parses the Python arguments into 4 ints names k,iter,n,d*/
+    if (!PyArg_ParseTuple(args, "iiii", &k, &iter, &n, &d))
     {
         return NULL; /* In the CPython API, a NULL value is never valid for a
                         PyObject* so it is used to signal that an error has occurred. */
@@ -17,7 +17,7 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     // TODO: change "d" to ret value (void?)
     // TODO: use kmeans from HW1
     /* This builds the answer ("d" = Convert a C double to a Python floating point number) back into a python object */
-    return Py_BuildValue("d", kmeans(k, iter, n, dimension)); /*  Py_BuildValue(...) returns a PyObject*  */
+    return Py_BuildValue("d", kmeans(k, iter, n, d)); /*  Py_BuildValue(...) returns a PyObject*  */
 }
 
 static PyMethodDef kmeansMethods[] = {
