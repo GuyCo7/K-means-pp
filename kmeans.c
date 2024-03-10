@@ -5,21 +5,6 @@
 
 double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids, double **vectors_arr)
 {
-
-    
-
-    printf("IN KMEANS_C\n");
-
-    printf("k - %d", k);
-    printf("iter - %d", iter);
-    printf("N - %d", N);
-    printf("d - %d", d);
-    printf("eps - %d", eps);
-
-    // double distance(double *point1, double *point2, int d);
-    // int areBiggerThanEpsilon(double *arr, int size, double eps);
-    // int isInteger(char *str);
-
     // double **vectors_arr;
     int i, j;
     int count = 0;
@@ -34,109 +19,14 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
     double *sum;
     double *new_centroid;
 
-    printf("centroid[0][0] - %.4f", centroids[0][0]);
-
-    /* Print centroids */
-    for (i = 0; i < k; i++)
-    {
-        for (j = 0; j < d; j++)
-        {
-            printf("%.4f", centroids[i][j]);
-            if (j < d - 1)
-            {
-                printf(",");
-            }
-            else
-            {
-                printf("\n");
-            }
-        }
-    }
-
-    printf("after initialization\n");
-
-    /* Allocate memory for vectors */
-    // vectors_arr = (double **)malloc(n * sizeof(double *));
-    // if (vectors_arr == NULL)
-    // {
-    //     printf("An Error Has Occurred\n");
-    //     return 1;
-    // }
-    // for (i = 0; i < n; i++)
-    // {
-    //     vectors_arr[i] = (double *)malloc(d * sizeof(double));
-    //     if (vectors_arr[i] == NULL)
-    //     {
-    //         printf("An Error Has Occurred\n");
-    //         for (j = 0; j < i; j++)
-    //         {
-    //             free(vectors_arr[j]);
-    //         }
-    //         free(vectors_arr);
-    //         return 1;
-    //     }
-    //     for (j = 0; j < d; j++)
-    //     {
-    //         scanf("%lf,", &vectors_arr[i][j]);
-    //     }
-    // }
-
-    /* Allocate memory for centroids */
-    // centroids = (double **)malloc(k * sizeof(double *));
-    // if (centroids == NULL)
-    // {
-    //     printf("An Error Has Occurred\n");
-    //     for (i = 0; i < n; i++)
-    //     {
-    //         free(vectors_arr[i]);
-    //     }
-    //     free(vectors_arr);
-    //     return 1;
-    // }
-    // for (i = 0; i < k; i++)
-    // {
-    //     centroids[i] = (double *)malloc(d * sizeof(double));
-    //     if (centroids[i] == NULL)
-    //     {
-    //         printf("An Error Has Occurred\n");
-    //         for (j = 0; j < i; j++)
-    //         {
-    //             free(centroids[j]);
-    //         }
-    //         free(centroids);
-    //         for (j = 0; j < n; j++)
-    //         {
-    //             free(vectors_arr[j]);
-    //         }
-    //         free(vectors_arr);
-    //         return 1;
-    //     }
-    //     for (j = 0; j < d; j++)
-    //     {
-    //         centroids[i][j] = vectors_arr[i][j];
-    //     }
-    // }
-
     closest_centroid_for_vector = (int *)malloc(N * sizeof(int));
-    printf("after first malloc\n");
     if (closest_centroid_for_vector == NULL)
     {
         printf("An Error Has Occurred\n");
-        // for (i = 0; i < k; i++)
-        // {
-        //     free(centroids[i]);
-        // }
-        // free(centroids);
-        // for (i = 0; i < N; i++)
-        // {
-        //     free(vectors_arr[i]);
-        // }
-        // free(vectors_arr);
         return NULL;
     }
     for (i = 0; i < N; i++)
     {
-        printf("i is --- %d", i);
         double min_distance = distance(vectors_arr[i], centroids[0], d);
         closest_centroid_for_vector[i] = 0;
         for (j = 1; j < k; j++)
@@ -150,23 +40,11 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
         }
     }
 
-    printf("after closest_centroid_for_vector\n");
-
     delta_centroids = (double *)malloc(k * sizeof(double));
     if (delta_centroids == NULL)
     {
         printf("An Error Has Occurred\n");
         free(closest_centroid_for_vector);
-        // for (i = 0; i < k; i++)
-        // {
-        //     free(centroids[i]);
-        // }
-        // free(centroids);
-        // for (i = 0; i < n; i++)
-        // {
-        //     free(vectors_arr[i]);
-        // }
-        // free(vectors_arr);
         return NULL;
     }
     for (i = 0; i < k; i++)
@@ -174,24 +52,12 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
         delta_centroids[i] = 1.0;
     }
 
-    printf("after delta_centroids\n");
-
     sum = (double *)malloc(d * sizeof(double));
     if (sum == NULL)
     {
         printf("An Error Has Occurred\n");
         free(delta_centroids);
         free(closest_centroid_for_vector);
-        // for (i = 0; i < k; i++)
-        // {
-        //     free(centroids[i]);
-        // }
-        // free(centroids);
-        // for (i = 0; i < N; i++)
-        // {
-        //     free(vectors_arr[i]);
-        // }
-        // free(vectors_arr);
         return NULL;
     }
     for (i = 0; i < d; i++)
@@ -206,16 +72,6 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
         free(sum);
         free(delta_centroids);
         free(closest_centroid_for_vector);
-        // for (i = 0; i < k; i++)
-        // {
-        //     free(centroids[i]);
-        // }
-        // free(centroids);
-        // for (i = 0; i < n; i++)
-        // {
-        //     free(vectors_arr[i]);
-        // }
-        // free(vectors_arr);
         return NULL;
     }
     for (i = 0; i < d; i++)
@@ -291,20 +147,11 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
     }
 
     /* Free allocated memory */
-    // for (i = 0; i < k; i++)
-    // {
-    //     free(centroids[i]);
-    // }
-    // free(centroids);
+
     free(closest_centroid_for_vector);
     free(delta_centroids);
     free(sum);
     free(new_centroid);
-    // for (i = 0; i < n; i++)
-    // {
-    //     free(vectors_arr[i]);
-    // }
-    // free(vectors_arr);
 
     return centroids;
 }
