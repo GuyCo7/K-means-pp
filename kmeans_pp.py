@@ -70,28 +70,49 @@ def main():
     
     centroids = []
     centroids.append(first_center_centroid)
+    print("centroids --- " + str(centroids))
     
+    
+    # 4 - Repeat Steps 2 and 3 until k centers have been chosen
+    while len(centroids) < k:
+        
     # 2 - For each data point x not chosen yet, compute D(x), the distance between x and the nearest
     #     center that has already been chosen.
-    
-    print(sorted_table.values)
-    for i in range(N):
-        if i == first_centeroid_index:
-            continue
-        distance = euclidean_distance(sorted_table.values[i][1:], sorted_table.values[first_centeroid_index][1:])
-        print(distance)
+        print(sorted_table.values)
+        centroids_indices = [centroid[0] for centroid in centroids]
+        print("centroids_indices --- " + str(centroids_indices))
+        for i in range(N):
+            if i in centroids_indices:
+                print(str(i) + " is inside the centroids list")
+                continue
+            min_distance = D(sorted_table.values[i][1:], [centroid[1:] for centroid in centroids])
+            print(min_distance)
+            # distance = euclidean_distance(sorted_table.values[i][1:], sorted_table.values[first_centeroid_index][1:])
+            # print(distance)
+            
         
+        # 3 - Choose one new data point at random as a new center, using a weighted probability distribution
+        #     where a point x is chosen with probability proportional to P(xl)
+        
+        
+        probabilities = get_probabilities(sorted_table, N, centroids)
+        print(probabilities)
+        # print("number of elements --- " + str(len(probabilities)))
+        # sum = 0
+        # for prob in probabilities:
+        #     sum += prob
+        
+        # print("sum --- " + str(sum))
+        
+        chosen_index = np.random.choice(range(N), p=probabilities)
+        print("chosen --- " + str(chosen_index))
+        
+        chosen_centroid = sorted_table.values[chosen_index]
+        centroids.append(chosen_centroid)
+        print("centroids --- " + str(centroids))
     
-    # 3 - Choose one new data point at random as a new center, using a weighted probability distribution
-    #     where a point x is chosen with probability proportional to P(xl)
-    
-    
-    probabilities = get_probabilities(sorted_table, N, centroids)
-    print(probabilities)
-    sum = 0
-    for prob in probabilities:
-        sum += prob
-    
+    print("number of centroids --- " + str(len(centroids)))
+    print("k --- " + str(k))
 
 
 # ~~~ Helper Functions ~~~
