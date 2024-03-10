@@ -2,6 +2,7 @@ import math
 import sys
 import pandas as pd
 import numpy as np
+import kmeans_capi
 
 DEFAULT_ITERATIONS = 300
 
@@ -23,7 +24,7 @@ def main():
         file_name_2 = sys.argv[5]
     else:
         iter = DEFAULT_ITERATIONS
-        eps = convert_to_number(sys.argv[2])
+        eps = convert_to_float(sys.argv[2])
         file_name_1 = sys.argv[3]
         file_name_2 = sys.argv[4]
     
@@ -40,24 +41,21 @@ def main():
     table1.columns = range(table1.shape[1])
     table2.columns = range(table2.shape[1])
     
-    print ("1:::::\n" + table1.to_string())
-    print ("2:::::\n" + table2.to_string())
+    # print ("1:::::\n" + table1.to_string())
+    # print ("2:::::\n" + table2.to_string())
 
     merged_table = pd.merge(table1, table2, on=0)
-    print ("merged:::::\n" + merged_table.to_string())
+    d = merged_table.shape[1] - 1
     
     # Step 3: After join, sort the data points by the ’key’ in ascending order.
     
     sorted_table = merged_table.sort_values(by=0)
-    print ("sorted:::::\n" + sorted_table.to_string())
-    
     
     # Step 4: Implementation of the k-means++ algorithm
     # Kmeans++ Implementation
     
     # 1 - Choose one center uniformly at random among the data points.
     N = len(sorted_table)
-    print("number of data points --- " + str(N))
     
     assert k < N, "Invalid number of clusters!"
     
@@ -66,10 +64,9 @@ def main():
     print("first_center_index --- " + str(first_centeroid_index))
     
     first_center_centroid = sorted_table.values[first_centeroid_index]
-    print("first_center --- " + str(first_center_centroid))
+    print(first_center_centroid)
     
-    centroids = []
-    centroids.append(first_center_centroid)
+    centroids = [first_center_centroid[1:]]
     print("centroids --- " + str(centroids))
     
     
@@ -78,15 +75,13 @@ def main():
         
     # 2 - For each data point x not chosen yet, compute D(x), the distance between x and the nearest
     #     center that has already been chosen.
-        print(sorted_table.values)
-        centroids_indices = [centroid[0] for centroid in centroids]
-        print("centroids_indices --- " + str(centroids_indices))
-        for i in range(N):
-            if i in centroids_indices:
-                print(str(i) + " is inside the centroids list")
-                continue
-            min_distance = D(sorted_table.values[i][1:], [centroid[1:] for centroid in centroids])
-            print(min_distance)
+        # centroids_indices = [centroid[0] for centroid in centroids]
+        # for i in range(N):
+        #     if i in centroids_indices:
+        #         print(str(i) + " is inside the centroids list")
+        #         continue
+            # min_distance = D(sorted_table.values[i][1:], [centroid[1:] for centroid in centroids])
+            # print(min_distance)
             # distance = euclidean_distance(sorted_table.values[i][1:], sorted_table.values[first_centeroid_index][1:])
             # print(distance)
             
@@ -96,7 +91,7 @@ def main():
         
         
         probabilities = get_probabilities(sorted_table, N, centroids)
-        print(probabilities)
+        # print("probabilities - " + str(probabilities))
         # print("number of elements --- " + str(len(probabilities)))
         # sum = 0
         # for prob in probabilities:
@@ -105,14 +100,29 @@ def main():
         # print("sum --- " + str(sum))
         
         chosen_index = np.random.choice(range(N), p=probabilities)
-        print("chosen --- " + str(chosen_index))
+        # print("chosen --- " + str(chosen_index))
         
         chosen_centroid = sorted_table.values[chosen_index]
-        centroids.append(chosen_centroid)
+        print("chosen_centroid[1:] ---" + str(chosen_centroid[1:]))
+        centroids.append(chosen_centroid[1:])
         print("centroids --- " + str(centroids))
     
-    print("number of centroids --- " + str(len(centroids)))
-    print("k --- " + str(k))
+    # print("number of centroids --- " + str(len(centroids)))
+    # print("k --- " + str(k))
+    
+    # 5 - Now that the initial centers have been chosen, proceed using standard k-means clustering
+
+    data_point = []
+    for i in range(N):
+        data_point.append(sorted_table.values[1:])
+        
+    final_centroids = kmeans_capi.kmeans(k, iter, N, d, eps, centroids, data_point)
+    
+    
+    final_centroid_indices = [centroid[0] for centroid in final_centroids]
+    print(str(final_centroid_indices))
+    for centroid in final_centroids:
+        print (str(centroid[1:]))
 
 
 # ~~~ Helper Functions ~~~
@@ -152,6 +162,7 @@ def get_probability(vector, centroids, vectors, N):
         sum += D(current_vector, centroids)
     
     return current_min_distance / sum
+
 
 def get_probabilities(sorted_table, N, centroids):
     probabilities = []
