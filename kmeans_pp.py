@@ -40,35 +40,29 @@ def main():
     
     table1.columns = range(table1.shape[1])
     table2.columns = range(table2.shape[1])
-    
-    # print ("1:::::\n" + table1.to_string())
-    # print ("2:::::\n" + table2.to_string())
 
     merged_table = pd.merge(table1, table2, on=0)
     d = merged_table.shape[1] - 1
+    
     
     # Step 3: After join, sort the data points by the ’key’ in ascending order.
     
     sorted_table = merged_table.sort_values(by=0)
     
+    N = len(sorted_table)
+    assert k < N, "Invalid number of clusters!"
+    
+    
     # Step 4: Implementation of the k-means++ algorithm
     # Kmeans++ Implementation
     
     # 1 - Choose one center uniformly at random among the data points.
-    N = len(sorted_table)
-    
-    assert k < N, "Invalid number of clusters!"
     
     np.random.seed(0)
     first_centeroid_index = np.random.choice(N)
-    print("first_center_index --- " + str(first_centeroid_index))
     
-    first_center_centroid = sorted_table.values[first_centeroid_index]
-    print(first_center_centroid)
-    
-    centroids = [first_center_centroid[1:]]
-    print("centroids --- " + str(centroids))
-    
+    first_centroid = sorted_table.values[first_centeroid_index][1:].tolist()
+    centroids = [first_centroid]    
     
     # 4 - Repeat Steps 2 and 3 until k centers have been chosen
     while len(centroids) < k:
@@ -91,38 +85,27 @@ def main():
         
         
         probabilities = get_probabilities(sorted_table, N, centroids)
-        # print("probabilities - " + str(probabilities))
-        # print("number of elements --- " + str(len(probabilities)))
-        # sum = 0
-        # for prob in probabilities:
-        #     sum += prob
         
-        # print("sum --- " + str(sum))
+        chosen_centeroid_index = np.random.choice(N, p=probabilities)
         
-        chosen_index = np.random.choice(range(N), p=probabilities)
-        # print("chosen --- " + str(chosen_index))
-        
-        chosen_centroid = sorted_table.values[chosen_index]
-        print("chosen_centroid[1:] ---" + str(chosen_centroid[1:]))
-        centroids.append(chosen_centroid[1:])
-        print("centroids --- " + str(centroids))
-    
-    # print("number of centroids --- " + str(len(centroids)))
-    # print("k --- " + str(k))
+        chosen_centroid = sorted_table.values[chosen_centeroid_index][1:].tolist()
+        centroids.append(chosen_centroid)
     
     # 5 - Now that the initial centers have been chosen, proceed using standard k-means clustering
 
-    data_point = []
+
+    data_points = []
     for i in range(N):
-        data_point.append(sorted_table.values[1:])
+        data_points.append(sorted_table.values[i][1:].tolist())
         
-    final_centroids = kmeans_capi.kmeans(k, iter, N, d, eps, centroids, data_point)
+    final_centroids = kmeans_capi.kmeans(k, iter, N, d, eps, centroids, data_points)
     
     
+    # Print the desired output
     final_centroid_indices = [centroid[0] for centroid in final_centroids]
     print(str(final_centroid_indices))
     for centroid in final_centroids:
-        print (str(centroid[1:]))
+        print(str(centroid))
 
 
 # ~~~ Helper Functions ~~~

@@ -15,74 +15,98 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     int d;
     double eps;
     double **centroids;
-    double **parsed_vectors;
     double **vectors_arr;
     double **parsed_centroids;
     double **result_centroids;
+    double **parsed_vectors;
     PyObject *py_value;
-    PyObject **py_vector;
+    PyObject *cen_value;
+    double num;
 
-    /* This parses the Python arguments into 4 ints names k,iter,n,d*/
-    if (!PyArg_ParseTuple(args, "iiiidO!O!", &k, &iter, &n, &d, &eps, &PyList_Type, &centroids, &PyList_Type, &vectors_arr))
+    /* Parse Python arguments */
+    if (!PyArg_ParseTuple(args, "iiiidOO", &k, &iter, &n, &d, &eps, &centroids, &vectors_arr))
     {
-        return NULL; /* In the CPython API, a NULL value is never valid for a
-                        PyObject* so it is used to signal that an error has occurred. */
+        return NULL;
     }
-
-    int length = PyObject_Length(vectors_arr);
-    printf("length - %d", length);
 
     // Allocate memory for the vectors array of pointers to doubles
     parsed_vectors = (double **)malloc(n * sizeof(double *));
-    printf("after parsed vectors");
     if (parsed_vectors == NULL)
     {
         printf("Error: Memory allocation failed\n");
         return NULL;
     }
 
-    // Iterate through each vector
     for (i = 0; i < n; i++)
     {
-        // Allocate memory for the current vector
         parsed_vectors[i] = (double *)malloc(d * sizeof(double));
         if (parsed_vectors[i] == NULL)
         {
-            printf("Error: Memory allocation failed\n");
-            // Free allocated memory before returning NULL
+            printf("An Error Has Occurred\n");
             for (j = 0; j < i; j++)
             {
-                free(parsed_vectors[j]);
+                free(vectors_arr[j]);
             }
-            free(parsed_vectors);
+            free(vectors_arr);
             return NULL;
         }
-        // Copy values from vectors_arr to vectors
-        py_vector = PyList_GetItem(vectors_arr, i);
-        for (j = 0; j < d; j++)
-        {
-            printf("bef");
-            py_value = py_vector[j];
-            printf("after");
-            parsed_vectors[i][j] = PyFloat_AsDouble(py_value);
-        }
+    }
+
+    // Allocate memory for the vectors array of pointers to doubles
+    parsed_centroids = (double **)malloc(k * sizeof(double *));
+    if (parsed_centroids == NULL)
+    {
+        printf("Error: Memory allocation failed\n");
+        return NULL;
     }
 
     for (i = 0; i < k; i++)
     {
+        parsed_centroids[i] = (double *)malloc(d * sizeof(double));
+        if (parsed_centroids[i] == NULL)
+        {
+            printf("An Error Has Occurred\n");
+            for (j = 0; j < i; j++)
+            {
+                free(parsed_centroids[j]);
+            }
+            free(parsed_centroids);
+            return NULL;
+        }
+    }
+
+    for (i = 0; i < n; i++)
+    {
         for (j = 0; j < d; j++)
         {
-            printf("%.4f", parsed_vectors[i][j]);
-            if (j < d - 1)
+            py_value = PyList_GetItem(PyList_GetItem(vectors_arr, i), j);
+            num = PyFloat_AsDouble(py_value);
+            parsed_vectors[i][j] = num;
+            if (i < k)
             {
-                printf(",");
-            }
-            else
-            {
-                printf("\n");
+                cen_value = PyList_GetItem(PyList_GetItem(centroids, i), j);
+                num = PyFloat_AsDouble(cen_value);
+                parsed_centroids[i][j] = num;
             }
         }
     }
+
+    // print vectors
+    // for (i = 0; i < k; i++)
+    // {
+    //     for (j = 0; j < d; j++)
+    //     {
+    //         printf("%.4f", parsed_vectors[i][j]);
+    //         if (j < d - 1)
+    //         {
+    //             printf(",");
+    //         }
+    //         else
+    //         {
+    //             printf("\n");
+    //         }
+    //     }
+    // }
 
     result_centroids = kmeans_c(k, iter, n, d, eps, parsed_centroids, parsed_vectors);
     free(parsed_centroids);
