@@ -130,6 +130,7 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
     }
 
     /* Print centroids */
+    printf("printing centroids:\n");
     for (i = 0; i < k; i++)
     {
         for (j = 0; j < d; j++)
@@ -153,6 +154,7 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
     free(sum);
     free(new_centroid);
 
+    printf("Before returning the centroids\n");
     return centroids;
 }
 

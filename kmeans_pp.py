@@ -60,6 +60,7 @@ def main():
     
     np.random.seed(0)
     first_centeroid_index = np.random.choice(N)
+    centroids_indices = [first_centeroid_index]
     
     first_centroid = sorted_table.values[first_centeroid_index][1:].tolist()
     centroids = [first_centroid]    
@@ -88,6 +89,7 @@ def main():
         
         chosen_centeroid_index = np.random.choice(N, p=probabilities)
         
+        centroids_indices.append(chosen_centeroid_index)
         chosen_centroid = sorted_table.values[chosen_centeroid_index][1:].tolist()
         centroids.append(chosen_centroid)
     
@@ -97,15 +99,25 @@ def main():
     data_points = []
     for i in range(N):
         data_points.append(sorted_table.values[i][1:].tolist())
-        
-    final_centroids = kmeans_capi.kmeans(k, iter, N, d, eps, centroids, data_points)
     
+    print("Python is sending: ")
+    print("data_points: " + str(data_points))
+    print("centroids: " + str(centroids))
+    
+    final_centroids = kmeans_capi.fit(k, iter, N, d, eps, centroids, data_points)
+    # print("after calling the c func")
+    # print("final_centroids type : ")
+    # print("final_centroids: \n" + str(final_centroids))
     
     # Print the desired output
-    final_centroid_indices = [centroid[0] for centroid in final_centroids]
-    print(str(final_centroid_indices))
+    print("Printing centroids_indices in python:")
+    print(",".join([str(index) for index in centroids_indices]))
+    print("Printing final_centroids in python:")      
     for centroid in final_centroids:
-        print(str(centroid))
+        formatted_centroid = ",".join(["{:.4f}".format(coordination) for coordination in centroid])
+        print(formatted_centroid)
+    
+    
 
 
 # ~~~ Helper Functions ~~~
