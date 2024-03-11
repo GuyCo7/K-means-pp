@@ -5,10 +5,8 @@
 
 double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids, double **vectors_arr)
 {
-    // double **vectors_arr;
     int i, j;
     int count = 0;
-    // double **centroids;
     int *closest_centroid_for_vector;
     int iteration = 0;
     double *delta_centroids;
@@ -18,6 +16,8 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
     double curr_d;
     double *sum;
     double *new_centroid;
+    double min_distance;
+    double curr_distance;
 
     closest_centroid_for_vector = (int *)malloc(N * sizeof(int));
     if (closest_centroid_for_vector == NULL)
@@ -27,11 +27,11 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
     }
     for (i = 0; i < N; i++)
     {
-        double min_distance = distance(vectors_arr[i], centroids[0], d);
+        min_distance = distance(vectors_arr[i], centroids[0], d);
         closest_centroid_for_vector[i] = 0;
         for (j = 1; j < k; j++)
         {
-            double curr_distance = distance(vectors_arr[i], centroids[j], d);
+            curr_distance = distance(vectors_arr[i], centroids[j], d);
             if (curr_distance < min_distance)
             {
                 closest_centroid_for_vector[i] = j;
@@ -162,15 +162,4 @@ int areBiggerThanEpsilon(double *arr, int size, double eps)
         }
     }
     return 0;
-}
-
-int isInteger(char *str)
-{
-    char *endptr;
-    strtol(str, &endptr, 10);
-    if (*endptr != '\0' || endptr == str)
-    {
-        return 0;
-    }
-    return 1;
 }
