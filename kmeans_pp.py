@@ -70,19 +70,8 @@ def main():
         
     # 2 - For each data point x not chosen yet, compute D(x), the distance between x and the nearest
     #     center that has already been chosen.
-        # centroids_indices = [centroid[0] for centroid in centroids]
-        # for i in range(N):
-        #     if i in centroids_indices:
-        #         print(str(i) + " is inside the centroids list")
-        #         continue
-            # min_distance = D(sorted_table.values[i][1:], [centroid[1:] for centroid in centroids])
-            # print(min_distance)
-            # distance = euclidean_distance(sorted_table.values[i][1:], sorted_table.values[first_centeroid_index][1:])
-            # print(distance)
-            
-        
-        # 3 - Choose one new data point at random as a new center, using a weighted probability distribution
-        #     where a point x is chosen with probability proportional to P(xl)
+    # 3 - Choose one new data point at random as a new center, using a weighted probability distribution
+    #     where a point x is chosen with probability proportional to P(xl)
         
         
         probabilities = get_probabilities(sorted_table, N, centroids)
@@ -95,24 +84,16 @@ def main():
     
     # 5 - Now that the initial centers have been chosen, proceed using standard k-means clustering
 
-
+    # Parsing the vectors from pandas data frame to a 2D list and cutting the index of each vector
     data_points = []
     for i in range(N):
         data_points.append(sorted_table.values[i][1:].tolist())
     
-    print("Python is sending: ")
-    print("data_points: " + str(data_points))
-    print("centroids: " + str(centroids))
-    
+    # Calling the kmeans C API with all the required params
     final_centroids = kmeans_capi.fit(k, iter, N, d, eps, centroids, data_points)
-    # print("after calling the c func")
-    # print("final_centroids type : ")
-    # print("final_centroids: \n" + str(final_centroids))
     
-    # Print the desired output
-    print("Printing centroids_indices in python:")
+    # Print the output
     print(",".join([str(index) for index in centroids_indices]))
-    print("Printing final_centroids in python:")      
     for centroid in final_centroids:
         formatted_centroid = ",".join(["{:.4f}".format(coordination) for coordination in centroid])
         print(formatted_centroid)

@@ -35,7 +35,7 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     parsed_vectors = (double **)malloc(n * sizeof(double *));
     if (parsed_vectors == NULL)
     {
-        printf("Error: Memory allocation failed\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
 
@@ -58,7 +58,7 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     parsed_centroids = (double **)malloc(k * sizeof(double *));
     if (parsed_centroids == NULL)
     {
-        printf("Error: Memory allocation failed\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
 
@@ -81,7 +81,7 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     result_centroids = (double **)malloc(k * sizeof(double *));
     if (result_centroids == NULL)
     {
-        printf("Error: Memory allocation failed\n");
+        printf("An Error Has Occurred\n");
         return NULL;
     }
 
@@ -116,97 +116,22 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
         }
     }
 
-    // print vectors
-    printf("parsed vectors:");
-    for (i = 0; i < n; i++)
-    {
-        for (j = 0; j < d; j++)
-        {
-            printf("%.4f", parsed_vectors[i][j]);
-            if (j < d - 1)
-            {
-                printf(",");
-            }
-            else
-            {
-                printf("\n");
-            }
-        }
-    }
-
-    // print centroids
-    printf("parsed centroids:\n");
-    for (i = 0; i < k; i++)
-    {
-        for (j = 0; j < d; j++)
-        {
-            printf("%.4f", parsed_centroids[i][j]);
-            if (j < d - 1)
-            {
-                printf(",");
-            }
-            else
-            {
-                printf("\n");
-            }
-        }
-    }
-
     result_centroids = kmeans_c(k, iter, n, d, eps, parsed_centroids, parsed_vectors);
-    printf("After getting the answer\n");
-    // print centroids
-    printf("result centroids:\n");
+
+    // Parse the centroids from c doubles to python floats
+    final_centroids = PyTuple_New(k);
     for (i = 0; i < k; i++)
     {
+        PyObject *centroid_tuple = PyTuple_New(d);
         for (j = 0; j < d; j++)
         {
-            printf("%.4f", result_centroids[i][j]);
-            if (j < d - 1)
-            {
-                printf(",");
-            }
-            else
-            {
-                printf("\n");
-            }
-        }
-    }
-
-    // for (i = 0; i < k; i++)
-    // {
-    //     for (j = 0; j < d; j++)
-    //     {
-    //         c_value = result_centroids[i][j];
-    //         py_value = PyFloat_FromDouble(c_value);
-
-            // py_value = PyList_GetItem(PyList_GetItem(vectors_arr, i), j);
-            // num = PyFloat_AsDouble(py_value);
-            // parsed_vectors[i][j] = num;
-            // if (i < k)
-            // {
-            //     cen_value = PyList_GetItem(PyList_GetItem(centroids, i), j);
-            //     num = PyFloat_AsDouble(cen_value);
-            //     parsed_centroids[i][j] = num;
-            // }
-    //     }
-    // }
-
-    // free(parsed_centroids);
-    // free(parsed_vectors);
-
-    final_centroids = PyTuple_New(k);
-
-    for (i = 0; i < k; i++) {
-        PyObject* centroid_tuple = PyTuple_New(d);
-        for (j = 0; j < d; j++) {
-            PyObject* float_obj = Py_BuildValue("d", result_centroids[i][j]);
+            PyObject *float_obj = Py_BuildValue("d", result_centroids[i][j]);
             PyTuple_SetItem(centroid_tuple, j, float_obj);
         }
         PyTuple_SetItem(final_centroids, i, centroid_tuple);
     }
 
-
-    return Py_BuildValue("O", final_centroids); /*  Py_BuildValue(...) returns a PyObject*  */
+    return Py_BuildValue("O", final_centroids);
 }
 
 static PyMethodDef kmeansMethods[] = {

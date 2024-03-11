@@ -129,32 +129,12 @@ double **kmeans_c(int k, int iter, int N, int d, double eps, double **centroids,
         iteration++;
     }
 
-    /* Print centroids */
-    printf("printing centroids:\n");
-    for (i = 0; i < k; i++)
-    {
-        for (j = 0; j < d; j++)
-        {
-            printf("%.4f", centroids[i][j]);
-            if (j < d - 1)
-            {
-                printf(",");
-            }
-            else
-            {
-                printf("\n");
-            }
-        }
-    }
-
     /* Free allocated memory */
-
     free(closest_centroid_for_vector);
     free(delta_centroids);
     free(sum);
     free(new_centroid);
 
-    printf("Before returning the centroids\n");
     return centroids;
 }
 
