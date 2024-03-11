@@ -89,6 +89,7 @@ def main():
     for i in range(N):
         data_points.append(sorted_table.values[i][1:].tolist())
     
+    
     # Calling the kmeans C API with all the required params
     final_centroids = kmeans_capi.fit(k, iter, N, d, eps, centroids, data_points)
     
@@ -97,7 +98,6 @@ def main():
     for centroid in final_centroids:
         formatted_centroid = ",".join(["{:.4f}".format(coordination) for coordination in centroid])
         print(formatted_centroid)
-    
     
 
 
@@ -129,22 +129,22 @@ def euclidean_distance(vector_x, vector_y):
     return math.sqrt(sum)
 
 
-def get_probability(vector, centroids, vectors, N):
+def get_probability(vector, centroids, sum):
     current_min_distance = D(vector, centroids)
-    
-    sum = 0
-    for i in range(N):
-        current_vector = vectors[i][1:]
-        sum += D(current_vector, centroids)
-    
     return current_min_distance / sum
 
 
 def get_probabilities(sorted_table, N, centroids):
     probabilities = []
+    
+    sum = 0
     for i in range(N):
         current_vector = sorted_table.values[i][1:]
-        current_probability = get_probability(current_vector, centroids, sorted_table.values, N)
+        sum += D(current_vector, centroids)
+    
+    for i in range(N):
+        current_vector = sorted_table.values[i][1:]
+        current_probability = get_probability(current_vector, centroids, sum)
         probabilities.append(current_probability)
     
     return probabilities
