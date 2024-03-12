@@ -23,11 +23,20 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     PyObject *cen_value;
     double num;
     PyObject *final_centroids;
+    int centroids_length;
+    int vectors_length;
 
     /* Parse Python arguments */
     if (!PyArg_ParseTuple(args, "iiiidOO", &k, &iter, &n, &d, &eps, &centroids, &vectors_arr))
     {
         return NULL;
+    }
+
+    vectors_length = PyObject_Length(centroids);
+    centroids_length = PyObject_Length(vectors_arr);
+    if (vectors_length < 0 || centroids_length < 0)
+    {
+        return NULL
     }
 
     // Allocate memory for the vectors array of pointers to doubles
