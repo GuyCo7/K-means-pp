@@ -45,7 +45,7 @@ def main():
     d = merged_table.shape[1] - 1
     
     
-    # Step 3: After join, sort the data points by the ’key’ in ascending order.
+    # Step 3: After join, sort the data points by the key in ascending order.
     
     sorted_table = merged_table.sort_values(by=0)
     

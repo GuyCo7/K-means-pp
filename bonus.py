@@ -24,10 +24,11 @@ def main():
     plt.title("Elbow Method for selection of optimal K clusters")
     plt.xlabel("K")
     plt.ylabel("Inertia")
-    plt.annotate(text="elbow point", xy=(2, inertias[1]), xytext=(2+1, inertias[1]+1), arrowprops=dict(facecolor='black', linestyle="--", linewidth=1))
+    
+    # On NOVA Server you must change "text=" to "s="
+    plt.annotate(s="elbow point", xy=(2, inertias[1]), xytext=(2+1, inertias[1]+1), arrowprops=dict(facecolor='black', linestyle="--", linewidth=1))
     
     plt.savefig("elbow.png")
-    plt.show()
 
     return 0
 
