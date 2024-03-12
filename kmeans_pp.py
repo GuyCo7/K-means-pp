@@ -31,7 +31,7 @@ def main():
     
     assert k > 1, "Invalid number of clusters!"
     assert iter > 1 and iter < 1000, "Invalid number of iteration!"
-    
+    assert eps >=0, "Invalid epsilon!"
     
     # Step 2: Combine both input files by inner join using the first column in each file as a key
     
