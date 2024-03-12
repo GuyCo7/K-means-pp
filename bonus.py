@@ -45,7 +45,7 @@ def main():
     plt.ylabel("Inertia")
     
     # On NOVA Server you must change "text=" to "s="
-    plt.annotate(text="elbow point",
+    plt.annotate(s="elbow point",
                  xy=(elbow_point_k, inertias[elbow_point_k-1]),
                  xytext=(elbow_point_k+1, inertias[elbow_point_k-1]+1),
                  arrowprops=dict(facecolor='black', linestyle="--", linewidth=1))
