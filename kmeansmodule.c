@@ -14,8 +14,8 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
     int n;
     int d;
     double eps;
-    double **centroids;
-    double **vectors_arr;
+    PyObject *centroids;
+    PyObject *vectors_arr;
     double **parsed_centroids;
     double **result_centroids;
     double **parsed_vectors;
