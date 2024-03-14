@@ -134,14 +134,23 @@ static PyObject *kmeans(PyObject *self, PyObject *args)
 }
 
 static PyMethodDef kmeansMethods[] = {
-    {"fit",                      /* the Python method name that will be used */
-     (PyCFunction)kmeans,        /* the C-function that implements the Python function and returns static PyObject*  */
-     METH_VARARGS,               /* flags indicating parameters
-                                    accepted for this function */
-     PyDoc_STR("kmeans in c.")}, /* The docstring for the function */
-    {NULL, NULL, 0, NULL}        /* The last entry must be all NULL as shown to act as a
-                                    sentinel. Python looks for this entry to know that all
-                                    of the functions for the module have been defined. */
+    {"fit",                                                                /* the Python method name that will be used */
+     (PyCFunction)kmeans,                                                  /* the C-function that implements the Python function and returns static PyObject*  */
+     METH_VARARGS,                                                         /* flags indicating parameters
+                                                                              accepted for this function */
+     PyDoc_STR("Calculate kmeans using initial centroids. \n Arguments:\n" /* The docstring for the function */
+               "k = number of clusters for the kmeans algorithm, "
+               "should be the same as length of centroids given.\n"
+               "iter = number of maximum iterations for the algorithm.\n"
+               "n = number of vectors given.\n"
+               "d = number of dimensions of the vectors.\n"
+               "eps = kmeans algorithm tolerance, will stop the algorithm when "
+               "all the deltas in distances between previous and current centroid is less than eps.\n"
+               "centroids - a list of lists contains the initial centroids"
+               "vectors_arr - a list of list contains the vectors to be clustered")},
+    {NULL, NULL, 0, NULL} /* The last entry must be all NULL as shown to act as a
+                             sentinel. Python looks for this entry to know that all
+                             of the functions for the module have been defined. */
 };
 
 static struct PyModuleDef kmeansmodule = {
