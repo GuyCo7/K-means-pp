@@ -1,5 +1,7 @@
 from sklearn import datasets
 from sklearn.cluster import KMeans
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import math
 
@@ -18,6 +20,25 @@ def main():
         iner = inertia(vectors, centroids)
         inertias.append(iner)
         
+    
+    slopes = []
+    for k in range(1, 9):
+        slope = calc_slope(k, k+1, inertias)    
+        slopes.append(slope)
+        
+    
+    ratios = []
+    for i in range(len(slopes)-1):
+        ratio = slopes[i] / slopes[i+1]
+        ratios.append(ratio)
+        
+    
+    max_ratio = max(ratios)
+    max_ratio_index = ratios.index(max_ratio)
+    
+    
+    elbow_point_k = max_ratio_index + 2
+        
     # Plot all 10 inertias and save to "elbow.png"
 
     plt.plot(range(1,11), inertias, marker="o")
@@ -26,7 +47,10 @@ def main():
     plt.ylabel("Inertia")
     
     # On NOVA Server you must change "text=" to "s="
-    plt.annotate(s="elbow point", xy=(2, inertias[1]), xytext=(2+1, inertias[1]+1), arrowprops=dict(facecolor='black', linestyle="--", linewidth=1))
+    plt.annotate(s="elbow point",
+                 xy=(elbow_point_k, inertias[elbow_point_k-1]),
+                 xytext=(elbow_point_k+1, inertias[elbow_point_k-1]+1),
+                 arrowprops=dict(facecolor='black', linestyle="--", linewidth=1))
     
     plt.savefig("elbow.png")
 
@@ -42,8 +66,6 @@ def inertia(vectors, centroids):
         
     return sum
         
-
-
 
 # ~~~ Helper Functions ~~~
 
@@ -68,6 +90,10 @@ def euclidean_distance(vector_x, vector_y):
         sum += (float(vector_x[i]) - float(vector_y[i])) ** 2
     
     return math.sqrt(sum)
+
+def calc_slope(x1, x2, values):
+    return (values[x2]-values[x1]) / (x2-x1)
+    
     
 
 if __name__ == "__main__":
